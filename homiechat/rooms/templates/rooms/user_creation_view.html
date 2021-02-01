@@ -1,0 +1,31 @@
+{% extends 'main.html' %}
+
+{% block content %}
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in usercreationform %}
+
+            <p>
+
+                {{ field.label_tag }}
+                {{ field }}
+
+                {% if field.help_text %}
+
+                    <small style="color: black;"> {{ field.help_text }} </small>
+
+                {% endif %}
+
+                {% for error in field.errors %}
+
+                    <p style="color: red;"> {{ error }} </p>
+
+                {% endfor %}
+
+            </p>
+
+        {% endfor %}
+        <button class="btn btn-outline-primary" type="submit">Register</button>
+        <!--      <input type="submit" value="Register">-->
+    </form>
+{% endblock %}
