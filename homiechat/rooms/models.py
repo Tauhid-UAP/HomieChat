@@ -32,7 +32,7 @@ class MyAccountManager(BaseUserManager):
         )
 
         user.set_password(password)
-        user.save(using=self._db)
+        user.save(self, using=self._db)
         return user
 
     def create_superuser(self, email, username, password):
@@ -42,7 +42,6 @@ class MyAccountManager(BaseUserManager):
             username=username,
         )
 
-        user.user_type = 1
 
         user.is_admin = True
         user.is_staff = True
@@ -54,7 +53,6 @@ class MyAccountManager(BaseUserManager):
 
 
 class HomieChatUser(AbstractBaseUser):
-
     # required to include
     email = models.EmailField(verbose_name='email', unique=True, max_length=60)
     username = models.CharField(max_length=60, unique=True)
@@ -67,9 +65,9 @@ class HomieChatUser(AbstractBaseUser):
 
     # new
     name = models.CharField(max_length=60, verbose_name='name')
-    bio = models.CharField(max_length=60, verbose_name='bio')
-    image = models.ImageField(upload_to='user_images')
-    gender = models.SmallIntegerField(choices=GENDER_CHOICES)
+    bio = models.CharField(max_length=60, verbose_name='bio', null=True, blank=True, default=None)
+    image = models.ImageField(upload_to='user_images', null=True, blank=True)
+    gender = models.SmallIntegerField(choices=GENDER_CHOICES, null=True, blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username',]
@@ -79,10 +77,12 @@ class HomieChatUser(AbstractBaseUser):
         try:
             url = self.image.url
         except:
-            if self.gender == MALE_NUMBER:
+            if self.gender == FEMALE_NUMBER:
+                url = static('images/default_female_picture.png')
+            elif self.gender == MALE_NUMBER:
                 url = static('images/default_male_picture.png')
             else:
-                url = static('images/default_female_picture.png')
+                url = static('images/default_profile_picture.png')
 
         return url
 
@@ -96,6 +96,9 @@ class HomieChatUser(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return True
+
+    class Meta:
+        verbose_name_plural = "Homie Chat Users"
 
 
 

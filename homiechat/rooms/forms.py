@@ -2,15 +2,26 @@ from django import forms
 
 from .models import HomieChatUser, Room, Video
 
+from django.contrib.auth.forms import UserCreationForm
+
 from django.contrib.auth import authenticate
 
-class UserCreationForm(forms.ModelForm):
+class UserCreationForm(UserCreationForm):
     email = forms.EmailField(max_length=60, help_text='Required. Add a valid email address.')
-    bio = forms.CharField(max_length=60, help_text='Type something about yourself.', required=False)
+    bio = forms.CharField(max_length=60, widget=forms.Textarea, help_text='Type something about yourself.', required=False)
 
     class Meta:
         model = HomieChatUser
-        fields = ('name', 'email', 'username', 'password1', 'password2',)
+        fields = (
+            'name',
+            'gender',
+            'email',
+            'username',
+            'password1',
+            'password2',
+            'bio',
+            'image',
+        )
 
 class UserAuthenticationForm(forms.ModelForm):
     password = forms.CharField(label='Password', widget=forms.PasswordInput)

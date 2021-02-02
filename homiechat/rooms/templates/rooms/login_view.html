@@ -1,43 +1,45 @@
-{% extends 'base.html' %}
+{% extends 'main.html' %}
 
 {% block content %}
-    <h2> Login </h2>
 
-    <form method="post">
+    <div class="form-wrapper">
+        <h2> Login </h2>
+        <form method="post">
 
-        {% csrf_token %}
+            {% csrf_token %}
 
-        {% for field in form %}
-            <p>
-                {{ field.label_tag }}
-                {{ field }}
-
-                {% if field.help_text %}
-
-                    <small style="color: black;"> {{ field.help_text }} </small>
-
-                {% endif %}
-
-                {% for error in field.errors %}
-
-                    <p style="color: red;"> {{ error }} </p>
-
-                {% endfor %}
-
-            </p>
-        {% endfor %}
-
-        {% if form.non_field_errors %}
-            <div style="color:red">
+            {% for field in form %}
                 <p>
-                    {{ form.non_field_errors }}
+                    {{ field.label_tag }}
+                    {{ field }}
+
+                    {% if field.help_text %}
+
+                        <small style="color: black;"> {{ field.help_text }} </small>
+
+                    {% endif %}
+
+                    {% for error in field.errors %}
+
+                        <p style="color: red;"> {{ error }} </p>
+
+                    {% endfor %}
+
                 </p>
-            </div>
+            {% endfor %}
 
-        {% endif %}
+            {% if form.non_field_errors %}
+                <div style="color:red">
+                    <p>
+                        {{ form.non_field_errors }}
+                    </p>
+                </div>
 
-        <button class="btn btn-primary" type="submit">Login</button>
+            {% endif %}
+
+            <button class="btn btn-primary" type="submit">Login</button>
 
 
-    </form>
+        </form>
+    </div>
 {% endblock %}

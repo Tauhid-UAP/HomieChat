@@ -1,12 +1,35 @@
 <!DOCTYPE html>
+
+{% load static %}
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
     <title>Homie Chat</title>
 </head>
 <body>
-{% block content %}
-{% endblock %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="{% url 'user_creation_view' %}">Homie Chat</a>
+<!--      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">-->
+<!--        <span class="navbar-toggler-icon"></span>-->
+<!--      </button>-->
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+        </ul>
+	    <div>
+            {% if request.user.is_authenticated %}
+                <p style="color: white; margin-right: 10px;">
+                    Hi, <a href="{% url 'user_detail_view' request.user.id %}">{{request.user.username}}</a> <strong style="color: black;">|</strong>
+                    <a style="color:red;" href="{% url 'logout_view' %}">Logout</a>
+                </p>
+            {% endif %}
+	    </div>
+      </div>
+    </nav>
+    {% block content %}
+    {% endblock %}
 </body>
 </html>

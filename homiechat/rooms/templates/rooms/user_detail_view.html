@@ -1,5 +1,23 @@
 {% extends 'main.html' %}
 
 {% block content %}
-    Hello, {{user.username}}
+    <div class="nav justify-content-center">
+        <div class="card" style="width: 35rem;">
+            <img src="{{ user.image_url }}" class="card-img-top" width="120">
+
+            <div class="card-body">
+                <h2>
+                    <p class="card-title">{{user.name}}</p>
+                    <p class="font-weight-lighter">
+                        {% if user.gender == 1 %}
+                            Male
+                        {% elif user.gender == 2 %}
+                            Female
+                        {% endif %}
+                    </p>
+                    <p class="font-weight-lighter">Bio: {{user.bio}}</p>
+                </h2>
+            </div>
+        </div>
+    </div>
 {% endblock %}

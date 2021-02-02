@@ -23,10 +23,10 @@ def user_creation_view(request):
     context = {}
 
     if request.method == 'POST':
-        usercreationform = UserCreationForm(request.POST)
+        usercreationform = UserCreationForm(request.POST, request.FILES)
 
         if usercreationform.is_valid():
-            homiechatuser = HomieChatUser.save()
+            homiechatuser = usercreationform.save()
 
             email = usercreationform.cleaned_data.get('email')
             raw_password = usercreationform.cleaned_data.get('password1')
@@ -34,7 +34,7 @@ def user_creation_view(request):
             authenticated_account = authenticate(email=email, password=raw_password)
             login(request, authenticated_account)
 
-            return redirect('user_profile_view', pk=homiechatuser.id)
+            return redirect('user_detail_view', pk=homiechatuser.id)
         else:
             context['usercreationform'] = usercreationform
 
@@ -51,9 +51,13 @@ def login_view(request):
 
     context = {}
 
+    # initialize authentication form
+    # to avoid UnboundLocalError
+    # due to not assigning it
+    form = None
     if request.method == 'POST':
-        userauthenticationform = UserAuthenticationForm(request.POST)
-        if userauthenticationform.is_valid():
+        form = UserAuthenticationForm(request.POST)
+        if form.is_valid():
             email = request.POST['email']
             password = request.POST['password']
             user = authenticate(email=email, password=password)
@@ -67,12 +71,12 @@ def login_view(request):
 
     context['form'] = form
 
-    return render(request, 'forms/login_page.html', context)
+    return render(request, 'rooms/login_view.html', context)
 
 @login_required
 def logout_view(request):
     logout(request)
-    return redirect('user_creation_view.html')
+    return redirect('user_creation_view')
 
 class UserDetailView(LoginRequiredMixin, DetailView):
     model = HomieChatUser
