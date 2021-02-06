@@ -4,7 +4,7 @@
     <div class="form-wrapper">
         <form action="" method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {% for field in usercreationform %}
+            {% for field in form %}
 
                 <p>
 
@@ -26,12 +26,14 @@
                 </p>
 
             {% endfor %}
-            <button class="btn btn-outline-primary" type="submit">Register</button>
-            <!--      <input type="submit" value="Register">-->
-            <p>
-                Already have an account?
-                <a href="{% url 'login_view' %}">Sign in</a>.
-            </p>
+            {% block create_or_update %}
+                <button class="btn btn-outline-primary" type="submit">Register</button>
+                <!--      <input type="submit" value="Register">-->
+                <p>
+                    Already have an account?
+                    <a href="{% url 'login_view' %}">Sign in</a>.
+                </p>
+            {% endblock %}
         </form>
     </div>
 {% endblock %}

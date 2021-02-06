@@ -2,11 +2,11 @@ from django import forms
 
 from .models import HomieChatUser, Room, Video
 
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
 from django.contrib.auth import authenticate
 
-class UserCreationForm(UserCreationForm):
+class HomieChatUserCreationForm(UserCreationForm):
     email = forms.EmailField(max_length=60, help_text='Required. Add a valid email address.')
     bio = forms.CharField(max_length=60, widget=forms.Textarea, help_text='Type something about yourself.', required=False)
 
@@ -38,3 +38,18 @@ class UserAuthenticationForm(forms.ModelForm):
 
         if not authenticate(email=email, password=password):
             raise forms.ValidationError('Invalid login.')
+
+class HomieChatUserUpdateForm(forms.ModelForm):
+    email = forms.EmailField(max_length=60, help_text='Required. Add a valid email address.')
+    bio = forms.CharField(max_length=60, widget=forms.Textarea, help_text='Type something about yourself.', required=False)
+
+    class Meta:
+        model = HomieChatUser
+        fields = (
+            'name',
+            'gender',
+            'email',
+            'username',
+            'bio',
+            'image',
+        )
