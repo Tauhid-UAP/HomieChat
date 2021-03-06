@@ -120,3 +120,9 @@ def user_update_view(request):
         context['form'] = form
 
     return render(request, 'rooms/user_update_view.html', context=context)
+
+@login_required
+def prepare_chat_view(request):
+    context = {}
+
+    return render(request, 'rooms/prepare_chat_view.html', context=context)

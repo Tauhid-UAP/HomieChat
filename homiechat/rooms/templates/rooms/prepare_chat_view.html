@@ -1,0 +1,75 @@
+{% extends 'main.html' %}
+
+{% block content %}
+    <video id="remote-video" autoplay playsinline width="100%"></video>
+    <button id="btn-toggle-audio" class="btn btn-dark">Audio Mute</button>
+    <button id="btn-toggle-video" class="btn btn-dark">Video On</button>
+    <script type="text/javascript">
+        btnToggleAudio = document.querySelector("#btn-toggle-audio");
+        btnToggleVideo = document.querySelector("#btn-toggle-video");
+
+        const constraints = {
+            'video': true,
+            'audio': true
+        }
+        var localStream;
+        userMedia = navigator.mediaDevices.getUserMedia(constraints)
+            .then(stream => {
+                localStream = stream;
+                console.log('Got MediaStream:', stream);
+                mediaTracks = stream.getTracks();
+                
+                for(i=0; i < mediaTracks.length; i++){
+                    console.log(mediaTracks[i]);
+                }
+
+                audioTracks = stream.getAudioTracks();
+                videoTracks = stream.getVideoTracks();
+
+                if(audioTracks[0].enabled){
+                    btnToggleAudio.innerHTML = 'Audio Mute';
+                }else if(!audioTracks[0].enabled){
+                    btnToggleAudio.innerHTML = 'Audio Unmute';
+                }else{
+                    btnToggleAudio.innerHTML = 'Audio Unmute';
+                }
+                
+                if(videoTracks[0].enabled){
+                    btnToggleVideo.innerHTML = 'Video Off';
+                }else{
+                    btnToggleVideo.innerHTML = 'Video On';
+                }
+
+                remoteVideo = document.querySelector("#remote-video");
+                
+                
+                window.stream = stream; // make variable available to browser console
+                
+                remoteVideo.muted = true;
+                
+                remoteVideo.srcObject = stream;
+                
+            })
+            .catch(error => {
+                console.error('Error accessing media devices.', error);
+            });
+
+        btnToggleAudio.onclick = function(){
+            audioTracks[0].enabled = !audioTracks[0].enabled;
+            if(audioTracks[0].enabled){
+                btnToggleAudio.innerHTML = 'Audio Mute';
+            }else{
+                btnToggleAudio.innerHTML = 'Audio Unmute';
+            }
+        };
+
+        btnToggleVideo.onclick = function(){
+            videoTracks[0].enabled = !videoTracks[0].enabled;
+            if(videoTracks[0].enabled){
+                btnToggleVideo.innerHTML = 'Video Off';
+            }else{
+                btnToggleVideo.innerHTML = 'Video On';
+            }
+        };
+    </script>
+{% endblock %}
