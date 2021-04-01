@@ -126,3 +126,11 @@ def prepare_chat_view(request):
     context = {}
 
     return render(request, 'rooms/prepare_chat_view.html', context=context)
+
+@login_required
+def join_chat_view(request):
+    context = {}
+
+    context['username'] = request.user.username
+
+    return render(request, 'rooms/join_chat_view.html', context=context)

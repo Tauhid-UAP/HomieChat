@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rooms.apps.RoomsConfig',
+
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -120,3 +122,6 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'homiechat', 'media')
+
+# Channels
+ASGI_APPLICATION = 'homiechat.asgi.application'
