@@ -103,7 +103,10 @@ class HomieChatUser(AbstractBaseUser):
 
 
 class Room(models.Model):
-    code = models.CharField(max_length=20)
+    # code generated using signer
+    # will be trimmed to get a unique code
+    # of length 43
+    code = models.CharField(max_length=44, unique=True)
     name = models.CharField(max_length=40, null=True, blank=True, default=None)
     user = models.ForeignKey(to=HomieChatUser, on_delete=models.CASCADE)
 

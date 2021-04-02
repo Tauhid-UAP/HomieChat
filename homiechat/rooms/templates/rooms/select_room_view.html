@@ -1,0 +1,14 @@
+{% extends 'main.html' %}
+
+{% block content %}
+    <div class="nav justify-content-center">
+        <form method="get">
+            <p class="font-weight-bold">Copy and paste a room code and press Enter.</p>
+            <input type="text" name="room-input" placeholder="{{placeholder}}">
+            {% if warning %}
+                <p style="color: darkred;">Room does not exist. Enter a valid room name.</p>
+            {% endif %}
+            <button class="btn btn-success">Enter</button>
+        </form>
+    </div>
+{% endblock %}

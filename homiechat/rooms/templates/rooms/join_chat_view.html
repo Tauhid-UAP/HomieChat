@@ -25,9 +25,10 @@
         </div>
     </div>
     <script type="text/javascript">
-        // declare in template
+        // declare these variables in template
         // to access from peer.js
-        var username = '{{username}}';
+        
+        var username = '{{request.user.username}}';
     </script>
     <script type="text/javascript" src="{% static 'js/peer.js' %}"></script>
 {% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'main.html' %}
+
+{% block content %}
+    <div id="rooms" class="nav justify-content-center">
+        <ul>
+            {% for room in rooms %}
+                <li>
+                    <p class="font-weight-bold">
+                        {{room.name}} <a class="btn btn-success" href="{% url 'join_chat_view' room.code %}">Join</a>
+                    </p>
+                </li>
+            {% endfor %}
+        </ul>
+        <!-- <ul>
+            <li><p class="font-weight-bold">Room 1 <a class="btn btn-success">Join</a></p></li>
+            <li><p class="font-weight-bold">Room 2 <a class="btn btn-success">Join</a></p></li>
+        </ul> -->
+    </div>
+    <div class="nav justify-content-center">
+        <a class="btn btn-success" href="{% url 'room_creation_view' %}">Create New Room</a>
+    </div>
+{% endblock %}

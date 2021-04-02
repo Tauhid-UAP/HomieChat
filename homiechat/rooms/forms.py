@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import HomieChatUser, Room, Video
+from .models import HomieChatUser, Room
 
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
@@ -52,4 +52,12 @@ class HomieChatUserUpdateForm(forms.ModelForm):
             'username',
             'bio',
             'image',
+        )
+
+class RoomCreationForm(forms.ModelForm):
+    name = forms.CharField(max_length=40, required=True)
+    class Meta:
+        model = Room
+        fields = (
+            'name',
         )
