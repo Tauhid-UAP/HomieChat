@@ -119,3 +119,4 @@ class Video(models.Model):
         url = self.video_file.url
 
         return url
+

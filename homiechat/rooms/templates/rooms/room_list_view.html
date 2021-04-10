@@ -1,5 +1,7 @@
 {% extends 'main.html' %}
 
+{% load static %}
+
 {% block content %}
     <div id="rooms" class="nav justify-content-center">
         <ul>
@@ -7,6 +9,23 @@
                 <li>
                     <p class="font-weight-bold">
                         {{room.name}} <a class="btn btn-success" href="{% url 'join_chat_view' room.code %}">Join</a>
+                        <button id="{{room.code}}" class="btn btn-info">Copy Code</button>
+                        <script>
+                            var btnCopy = document.querySelector('#{{room.code}}');
+                            btnCopy.addEventListener('click', () => {
+                                var copyText = document.createElement('textarea');
+                                document.body.appendChild(copyText);
+                                copyText.innerHTML = '{{room.code}}';
+
+                                /* Select the text field */
+                                copyText.select();
+                                copyText.setSelectionRange(0, 99999); /* For mobile devices */
+
+                                /* Copy the text inside the text field */
+                                document.execCommand("copy");
+                                document.body.removeChild(copyText);
+                            });
+                        </script>
                     </p>
                 </li>
             {% endfor %}

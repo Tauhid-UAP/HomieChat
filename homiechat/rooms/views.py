@@ -117,6 +117,7 @@ class RoomListView(LoginRequiredMixin, ListView):
         # users can only view their own rooms
         rooms = Room.objects.filter(user=request.user)
         context['rooms'] = rooms
+        context['json_rooms'] = rooms
 
         return render(request, self.template_name, context)
 
