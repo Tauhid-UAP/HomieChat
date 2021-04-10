@@ -11,13 +11,13 @@ form
     text-align: left;
 }
 
-.video-grid-container {
+.video-grid-container{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     background-color: black;
 }
 
-.main-grid-container {
+.main-grid-container{
     display: grid;
     grid-template-columns: 60% 20%;
 }
@@ -25,4 +25,8 @@ form
 video {
     border-radius: 25%;
     background-color: black;
+}
+
+.sound-effect{
+    visibility: hidden;
 }

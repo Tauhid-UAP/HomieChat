@@ -348,8 +348,10 @@ function createOfferer(peerUsername, localScreenSharing, remoteScreenSharing, re
 
     // create and manage an RTCDataChannel
     var dc = peer.createDataChannel("channel");
+    var newConnectionSound = document.querySelector('#new-connection');
     dc.onopen = () => {
         console.log("Connection opened.");
+        newConnectionSound.play();
     };
     var remoteVideo = null;
     if(!localScreenSharing && !remoteScreenSharing){
@@ -460,6 +462,8 @@ function createAnswerer(offer, peerUsername, localScreenSharing, remoteScreenSha
 
     addLocalTracks(peer, localScreenSharing);
 
+    var newConnectionSound = document.querySelector('#new-connection');
+
     if(!localScreenSharing && !remoteScreenSharing){
         // if none are sharing screens (normal operation)
 
@@ -475,6 +479,7 @@ function createAnswerer(offer, peerUsername, localScreenSharing, remoteScreenSha
             peer.dc.onmessage = dcOnMessage;
             peer.dc.onopen = () => {
                 console.log("Connection opened.");
+                newConnectionSound.play();
             }
 
             // store the RTCPeerConnection
@@ -506,6 +511,7 @@ function createAnswerer(offer, peerUsername, localScreenSharing, remoteScreenSha
             }
             peer.dc.onopen = () => {
                 console.log("Connection opened.");
+                newConnectionSound.play();
             }
 
             // this peer is a screen sharer
@@ -543,6 +549,7 @@ function createAnswerer(offer, peerUsername, localScreenSharing, remoteScreenSha
             }
             peer.dc.onopen = () => {
                 console.log("Connection opened.");
+                newConnectionSound.play();
             }
 
             // store the RTCPeerConnection
@@ -617,6 +624,9 @@ function dcOnMessage(event){
     var li = document.createElement("li");
     li.appendChild(document.createTextNode(message));
     ul.appendChild(li);
+
+    var chatSound = document.querySelector('#chat-sound');
+    chatSound.play();
 }
 
 // get all stored data channels

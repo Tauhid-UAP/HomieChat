@@ -11,6 +11,10 @@ DATABASES = {
     }
 }
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
 # Channels
 CHANNEL_LAYERS = {
     "default": {
