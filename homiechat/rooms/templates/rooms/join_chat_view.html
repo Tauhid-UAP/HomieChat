@@ -22,12 +22,30 @@
             </div>
             <div id="ct"><input id="msg" disabled><button id="btn-send-msg" class="btn btn-success" disabled>send</button></div>
             <button id="btn-share-screen" class="btn btn-dark">Share Screen</button>
+
+            <button id="btn-record-screen">Record Screen</button>
+
+            <input type="file">
+            <div id="select-file-dialog" style="display: none;">
+                <div id="dialog-content">
+                  <div id="select-file">
+                    <div id="label">Select a file:</div>
+                    <input type="file" id="select-file-input">
+                  </div>
+                  <div id="dialog-footer">
+                    <button id="ok-button" disabled>Ok</button>
+                    <button id="cancel-button" class="cancel-button">Cancel</button>
+                  </div>
+                </div>
+              </div>
+
             <audio class="sound-effect" src="{% static 'sounds/new-chat-message.mp3' %}" id="chat-sound"></audio>
             <!-- Sound effects for new participant and chat obtained from https://zapslat.com -->
             <audio class="sound-effect" src="{% static 'sounds/peer-connection-opened.mp3' %}" id="new-connection"></audio>
             <!-- Sound effects for new participant and chat obtained from https://zapslat.com -->
         </div>
     </div>
+    <script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
     <script type="text/javascript">
         // declare these variables in template
         // to access from peer.js

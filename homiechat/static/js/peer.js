@@ -29,6 +29,29 @@ btnToggleVideo = document.querySelector("#btn-toggle-video");
 var btnSendMsg = document.querySelector('#btn-send-msg');
 var messageInput = document.querySelector('#msg');
 
+// button to start or stop screen recording
+var btnRecordScreen = document.querySelector('#btn-record-screen');
+// object that will start or stop screen recording
+var recorder;
+// true of currently recording, false otherwise
+var recording = false;
+
+// var file;
+
+// document.getElementById('share-file-button').addEventListener('click', () => {
+//     document.getElementById('select-file-dialog').style.display = 'block';
+// });
+  
+// document.getElementById('cancel-button').addEventListener('click', () => {
+//     document.getElementById('select-file-input').value = '';
+//     document.getElementById('select-file-dialog').style.display = 'none';
+// });
+  
+// document.getElementById('select-file-input').addEventListener('change', (event) => {
+//     file = event.target.files[0];
+//     document.getElementById('ok-button').disabled = !file;
+// });
+
 // ul of messages
 var ul = document.querySelector("#message-list");
 
@@ -318,6 +341,46 @@ userMedia = navigator.mediaDevices.getUserMedia(constraints)
 
             btnShareScreen.innerHTML = 'Stop sharing';
         }
+    })
+    .then(e => {
+        btnRecordScreen.addEventListener('click', () => {
+            if(recording){
+                // toggle recording
+                recording = !recording;
+
+                btnRecordScreen.innerHTML = 'Record Screen';
+
+                recorder.stopRecording(function() {
+                    var blob = recorder.getBlob();
+                    invokeSaveAsDialog(blob);
+                });
+
+                return;
+            }
+            
+            // toggle recording
+            recording = !recording;
+
+            navigator.mediaDevices.getDisplayMedia(constraints)
+                .then(stream => {
+                    recorder = RecordRTC(stream, {
+                        type: 'video',
+                        MimeType: 'video/webm'
+                    });
+                    recorder.startRecording();
+                    
+                    var mediaTracks = stream.getTracks();
+                    for(i=0; i < mediaTracks.length; i++){
+                        console.log(mediaTracks[i]);
+                    }
+
+                })
+                .catch(error => {
+                    console.log('Error accessing display media.', error);
+                });
+
+            btnRecordScreen.innerHTML = 'Stop Recording';
+        });
     })
     .catch(error => {
         console.error('Error accessing media devices.', error);
