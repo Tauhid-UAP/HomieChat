@@ -6,20 +6,20 @@ ALLOWED_HOSTS = [config('HOST1')]
 
 # Database
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('MYSQL_DB_NAME'),
-        'USER': config('MYSQL_DB_USERNAME'),
-        'PASSWORD': config('MYSQL_DB_PASSWORD'),
-        'HOST': config('MYSQL_DB_HOSTNAME'),
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': config('MYSQL_DB_NAME'),
+#         'USER': config('MYSQL_DB_USERNAME'),
+#         'PASSWORD': config('MYSQL_DB_PASSWORD'),
+#         'HOST': config('MYSQL_DB_HOSTNAME'),
+#     }
+# }
 
 # set STATIC_ROOT for pythonanywhere
 # otherwise admin styling will not manifest
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # HTTPS settings
 SESSION_COOKIE_SECURE = True

@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  homie_db:
+    image: postgres:16
+    volumes:
+      - homie_pg_data:/var/lib/postgresql/data/
+    
+    env_file:
+      - .env
+
+  homie_server:
+    # . indicates to look for the Dockerfile in the current directory to build the image
+    build: .
+    ports:
+      - "8000:8000"
+    # command: python manage.py runserver 0.0.0.0:8000
+    command: bash -c "python manage.py collectstatic --no-input && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/code
+
+    depends_on:
+      - homie_db
+
+volumes:
+  homie_pg_data:
