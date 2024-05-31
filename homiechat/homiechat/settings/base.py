@@ -116,7 +116,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+"""
+Running collecstatic will copy the contents of all the folders/files in STATICFILES_DIRS
+and copy them to STATIC_ROOT
+Therefore, contents of BASE_DIR/static will be copied to BASE_DIR/homiechat/saticfiles
+"""
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'homiechat', 'staticfiles')
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'homiechat', 'media')

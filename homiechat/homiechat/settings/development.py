@@ -4,7 +4,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['https://e8ba-103-96-36-21.ngrok-free.app']
+CSRF_TRUSTED_ORIGINS = ['https://be29-103-96-36-21.ngrok-free.app']
 
 # DATABASES = {
 #     'default': {
@@ -18,9 +18,16 @@ CSRF_TRUSTED_ORIGINS = ['https://e8ba-103-96-36-21.ngrok-free.app']
 # ]
 
 # Channels
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels.layers.InMemoryChannelLayer"
+#     }
+# }
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
-    }
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [(config("REDIS_HOST"), 6379)],
+        },
+    },
 }
-

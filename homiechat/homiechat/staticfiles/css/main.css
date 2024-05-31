@@ -1,0 +1,32 @@
+.form-wrapper{
+    display: block;
+    text-align: center;
+}
+
+form
+{
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+}
+
+.video-grid-container{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background-color: black;
+}
+
+.main-grid-container{
+    display: grid;
+    grid-template-columns: 60% 20%;
+}
+
+video {
+    border-radius: 25%;
+    background-color: black;
+}
+
+.sound-effect{
+    visibility: hidden;
+}
