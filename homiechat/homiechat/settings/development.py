@@ -4,7 +4,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['https://be29-103-96-36-21.ngrok-free.app']
+CSRF_TRUSTED_ORIGINS = [config('CSRF_TRUSTED_ORIGIN', 'https://homie.xyz')]
+
+# CORS_ALLOW_ALL_ORIGINS = True
 
 # DATABASES = {
 #     'default': {
