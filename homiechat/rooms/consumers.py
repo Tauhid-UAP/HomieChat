@@ -34,21 +34,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
         action = receive_dict['action']
         message = receive_dict['message']
 
-        # print('unanswered_offers: ', self.unanswered_offers)
-
         print('Message received: ', message)
 
         print('peer_username: ', peer_username)
         print('action: ', action)
-        print('self.channel_name: ', self.channel_name)
 
-        if(action == 'new-offer') or (action =='new-answer'):
+        if action in ('new-offer', 'new-answer', 'new-ice-candidate'):
             # in case its a new offer or answer
             # send it to the new peer or initial offerer respectively
 
             receiver_channel_name = receive_dict['message']['receiver_channel_name']
-
-            print('Sending to ', receiver_channel_name)
 
             # set new receiver as the current sender
             receive_dict['message']['receiver_channel_name'] = self.channel_name
@@ -62,6 +57,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
 
             return
+        
+
 
         # set new receiver as the current sender
         # so that some messages can be sent

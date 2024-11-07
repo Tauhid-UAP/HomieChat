@@ -4,3 +4,4 @@ __pycache__/
 .env
 .idea/
 user_images/
+staticfiles/

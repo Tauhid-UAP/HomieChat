@@ -109,8 +109,7 @@ function webSocketOnMessage(event){
     // username of other peer
     var peerUsername = parsedData['peer'];
     
-    console.log('peerUsername: ', peerUsername);
-    console.log('action: ', action);
+    console.log('%s sent %s', peerUsername, action);
 
     if(peerUsername == username){
         // ignore all messages from oneself
@@ -130,8 +129,6 @@ function webSocketOnMessage(event){
 
     // in case of new peer
     if(action == 'new-peer'){
-        console.log('New peer: ', peerUsername);
-
         // create new RTCPeerConnection
         createOfferer(peerUsername, false, remoteScreenSharing, receiver_channel_name);
 
@@ -151,8 +148,6 @@ function webSocketOnMessage(event){
     var localScreenSharing = parsedData['message']['remote_screen_sharing'];
 
     if(action == 'new-offer'){
-        console.log('Got new offer from ', peerUsername);
-
         // create new RTCPeerConnection
         // set offer as remote description
         var offer = parsedData['message']['sdp'];
@@ -181,19 +176,17 @@ function webSocketOnMessage(event){
 
         // get the answer
         var answer = parsedData['message']['sdp'];
-        
-        console.log('mapPeers:');
-        for(key in mapPeers){
-            console.log(key, ': ', mapPeers[key]);
-        }
-
-        console.log('peer: ', peer);
         console.log('answer: ', answer);
 
         // set remote description of the RTCPeerConnection
         peer.setRemoteDescription(answer);
 
         return;
+    }
+
+    if(action == 'new-ice-candidate') {
+        handleNewIceCandidateFromRemotePeer(parsedData['message']['candidate'], peerUsername);
+        return
     }
 }
 
@@ -233,25 +226,43 @@ const constraints = {
     'audio': true
 }
 
-const iceConfiguration = {
-    iceServers: [
-        {
-            urls: ['turn:numb.viagenie.ca'],
-            credential: '{{numb_turn_credential}}',
-            username: '{{numb_turn_username}}'
-        }
-    ]
-};
+// const iceConfiguration = {
+//     iceServers: [
+//         {
+//             urls: ['turn:numb.viagenie.ca'],
+//             credential: '{{numb_turn_credential}}',
+//             username: '{{numb_turn_username}}'
+//         }
+//     ]
+// };
+
+// const iceConfiguration = {
+//     iceServers: [
+//         {
+//             urls: ['stun:128.199.23.166:3478'],
+//             credential: 'tauhidpass',
+//             username: 'tauhidturn'
+//         },
+
+//         {
+//             urls: ['turn:128.199.23.166:3478'],
+//             credential: 'tauhidpass',
+//             username: 'tauhidturn'
+//         }
+//     ]
+// };
+
+const iceConfiguration = null;
 
 userMedia = navigator.mediaDevices.getUserMedia(constraints)
     .then(stream => {
         localStream = stream;
         console.log('Got MediaStream:', stream);
-        var mediaTracks = stream.getTracks();
         
-        for(i=0; i < mediaTracks.length; i++){
-            console.log(mediaTracks[i]);
-        }
+        // var mediaTracks = stream.getTracks();        
+        // for(i=0; i < mediaTracks.length; i++){
+        //     console.log(mediaTracks[i]);
+        // }
         
         localVideo.srcObject = localStream;
         localVideo.muted = true;
@@ -319,10 +330,10 @@ userMedia = navigator.mediaDevices.getUserMedia(constraints)
                 .then(stream => {
                     localDisplayStream = stream;
                     
-                    var mediaTracks = stream.getTracks();
-                    for(i=0; i < mediaTracks.length; i++){
-                        console.log(mediaTracks[i]);
-                    }
+                    // var mediaTracks = stream.getTracks();
+                    // for(i=0; i < mediaTracks.length; i++){
+                    //     console.log(mediaTracks[i]);
+                    // }
 
                     var localScreen = createVideo('my-screen');
                     // set to display stream
@@ -369,10 +380,10 @@ userMedia = navigator.mediaDevices.getUserMedia(constraints)
                     });
                     recorder.startRecording();
                     
-                    var mediaTracks = stream.getTracks();
-                    for(i=0; i < mediaTracks.length; i++){
-                        console.log(mediaTracks[i]);
-                    }
+                    // var mediaTracks = stream.getTracks();
+                    // for(i=0; i < mediaTracks.length; i++){
+                    //     console.log(mediaTracks[i]);
+                    // }
 
                 })
                 .catch(error => {
@@ -400,12 +411,31 @@ function sendSignal(action, message){
     )
 }
 
+function onIceCandidate(iceCandidate, peerUsername, receiver_channel_name, localScreenSharing, remoteScreenSharing) {
+    // candidate == null indicates that gathering is complete
+    if(!iceCandidate){
+        console.log("All ICE candidates are sent for %s", peerUsername);
+        return;
+    }
+
+    console.log('Sending ICE candidate to ', peerUsername, '.');
+
+    // send offer to new peer
+    // after ice candidate gathering is complete
+    sendSignal('new-ice-candidate', {
+        'candidate': iceCandidate,
+        'receiver_channel_name': receiver_channel_name,
+        'local_screen_sharing': localScreenSharing,
+        'remote_screen_sharing': remoteScreenSharing,
+    });
+}
+
 // create RTCPeerConnection as offerer
 // and store it and its datachannel
 // send sdp to remote peer after gathering is complete
 function createOfferer(peerUsername, localScreenSharing, remoteScreenSharing, receiver_channel_name){
-    var peer = new RTCPeerConnection(null);
-    
+    var peer = new RTCPeerConnection(iceConfiguration);
+
     // add local user media stream tracks
     addLocalTracks(peer, localScreenSharing);
 
@@ -485,31 +515,19 @@ function createOfferer(peerUsername, localScreenSharing, remoteScreenSharing, re
         };
     }
 
-    peer.onicecandidate = (event) => {
-        if(event.candidate){
-            console.log("New Ice Candidate! Reprinting SDP" + JSON.stringify(peer.localDescription));
-            return;
-        }
-        
-        // event.candidate == null indicates that gathering is complete
-        
-        console.log('Gathering finished! Sending offer SDP to ', peerUsername, '.');
-        console.log('receiverChannelName: ', receiver_channel_name);
-
-        // send offer to new peer
-        // after ice candidate gathering is complete
-        sendSignal('new-offer', {
-            'sdp': peer.localDescription,
-            'receiver_channel_name': receiver_channel_name,
-            'local_screen_sharing': localScreenSharing,
-            'remote_screen_sharing': remoteScreenSharing,
-        });
-    }
+    peer.onicecandidate = (event) => onIceCandidate(event.candidate, peerUsername, receiver_channel_name, localScreenSharing, remoteScreenSharing)
 
     peer.createOffer()
-        .then(o => peer.setLocalDescription(o))
-        .then(function(event){
+        .then(offer => peer.setLocalDescription(offer))
+        .then(() => {
             console.log("Local Description Set successfully.");
+
+            sendSignal('new-offer', {
+                'sdp': peer.localDescription,
+                'receiver_channel_name': receiver_channel_name,
+                'local_screen_sharing': localScreenSharing,
+                'remote_screen_sharing': remoteScreenSharing,
+            });
         });
 
     console.log('mapPeers[', peerUsername, ']: ', mapPeers[peerUsername]);
@@ -521,7 +539,7 @@ function createOfferer(peerUsername, localScreenSharing, remoteScreenSharing, re
 // and store it and its datachannel
 // send sdp to remote peer after gathering is complete
 function createAnswerer(offer, peerUsername, localScreenSharing, remoteScreenSharing, receiver_channel_name){
-    var peer = new RTCPeerConnection(null);
+    var peer = new RTCPeerConnection(iceConfiguration);
 
     addLocalTracks(peer, localScreenSharing);
 
@@ -536,6 +554,11 @@ function createAnswerer(offer, peerUsername, localScreenSharing, remoteScreenSha
         // and add tracks to remote video
         setOnTrack(peer, remoteVideo);
 
+        // mapPeers[peerUsername] = [peer, null];
+
+        /*
+        TODO: Remove data channel dependency
+        */
         // it will have an RTCDataChannel
         peer.ondatachannel = e => {
             peer.dc = e.channel;
@@ -635,29 +658,7 @@ function createAnswerer(offer, peerUsername, localScreenSharing, remoteScreenSha
         };
     }
 
-    peer.onicecandidate = (event) => {
-        if(event.candidate){
-            console.log("New Ice Candidate! Reprinting SDP" + JSON.stringify(peer.localDescription));
-            return;
-        }
-        
-        // event.candidate == null indicates that gathering is complete
-
-        console.log('Gathering finished! Sending answer SDP to ', peerUsername, '.');
-        console.log('receiverChannelName: ', receiver_channel_name);
-
-        // send answer to offering peer
-        // after ice candidate gathering is complete
-        // answer needs to send two types of screen sharing data
-        // local and remote so that offerer can understand
-        // to which RTCPeerConnection this answer belongs
-        sendSignal('new-answer', {
-            'sdp': peer.localDescription,
-            'receiver_channel_name': receiver_channel_name,
-            'local_screen_sharing': localScreenSharing,
-            'remote_screen_sharing': remoteScreenSharing,
-        });
-    }
+    peer.onicecandidate = (event) => onIceCandidate(event.candidate, peerUsername, receiver_channel_name, localScreenSharing, remoteScreenSharing)
 
     peer.setRemoteDescription(offer)
         .then(() => {
@@ -670,8 +671,15 @@ function createAnswerer(offer, peerUsername, localScreenSharing, remoteScreenSha
         })
         .then(() => {
             console.log('Answer created for %s.', peerUsername);
-            console.log('localDescription: ', peer.localDescription);
-            console.log('remoteDescription: ', peer.remoteDescription);
+            // console.log('localDescription: ', peer.localDescription);
+            // console.log('remoteDescription: ', peer.remoteDescription);
+
+            sendSignal('new-answer', {
+                'sdp': peer.localDescription,
+                'receiver_channel_name': receiver_channel_name,
+                'local_screen_sharing': localScreenSharing,
+                'remote_screen_sharing': remoteScreenSharing,
+            });
         })
         .catch(error => {
             console.log('Error creating answer for %s.', peerUsername);
@@ -807,4 +815,26 @@ function removeVideo(video){
     var videoWrapper = video.parentNode;
     // remove it
     videoWrapper.parentNode.removeChild(videoWrapper);
+}
+
+function addIceCandidateToPeer(rtcIceCandidate, peer) {
+    peer.addIceCandidate(rtcIceCandidate).catch((e) => {
+        console.error('Error adding received ice candidate: ', e);
+    })
+}
+
+function handleNewIceCandidateFromRemotePeer(candidate, peerUsername) {
+    const rtcIceCandidate = new RTCIceCandidate(candidate);
+
+    const mappedPeer = mapPeers[peerUsername];
+    if(!mappedPeer){
+        console.log('Skipped ICE candidate because stored peer connection was not found');
+        return;
+    }
+
+    console.log('Adding ICE candidate to peer connection');
+
+    const peer = mappedPeer[0];
+
+    addIceCandidateToPeer(rtcIceCandidate, peer);
 }
