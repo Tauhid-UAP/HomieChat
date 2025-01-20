@@ -1,3 +1,5 @@
+import json
+
 from django.shortcuts import render, redirect
 
 from .models import HomieChatUser, Room
@@ -15,11 +17,11 @@ from django.views.generic import DetailView, ListView
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 
-from .utils import generate_room_code
+from .utils import generate_room_code, get_ice_servers
 
-from django.shortcuts import get_object_or_404
+from typing import List
 
 # Create your views here.
 
@@ -199,19 +201,21 @@ def prepare_chat_view(request):
 
 @login_required
 def join_chat_view(request, room_code):
-    context = {}
+    context: dict = {}
 
-    context['room_code'] = room_code
+    # context['room_code'] = room_code
+    ice_servers: List[dict] = get_ice_servers()
+    context['ice_servers'] = json.dumps(ice_servers)
+    print('ICE SERVERS: {}'.format(ice_servers))
 
     return render(request, 'rooms/join_chat_view.html', context=context)
 
 @login_required
 def select_room_view(request):
-    context = {}
-
     room_code = request.GET.get('room-input')
     print('room_code: ', room_code)
     
+    context = {}
     context['placeholder'] = 'Enter room code ...'
 
     if room_code == None:

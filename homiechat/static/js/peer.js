@@ -252,7 +252,11 @@ const constraints = {
 //     ]
 // };
 
-const iceConfiguration = null;
+const iceConfiguration = {
+    iceServers: iceServers
+}
+
+// const iceConfiguration = null;
 
 userMedia = navigator.mediaDevices.getUserMedia(constraints)
     .then(stream => {

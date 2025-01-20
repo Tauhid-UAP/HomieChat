@@ -51,6 +51,7 @@
         // to access from peer.js
         
         var username = '{{request.user.username}}';
+        var iceServers = JSON.parse('{{ice_servers|safe}}')
     </script>
     <script type="text/javascript" src="{% static 'js/peer.js' %}"></script>
 {% endblock %}
